@@ -1,0 +1,56 @@
+# Render blueprint, read from the repo root on first deploy.
+#
+# The free tier gives 512 MB RAM, one shared CPU, and sleeps after ~15 minutes
+# idle. Every choice below follows from those three facts.
+
+services:
+  - type: web
+    name: taxopt-api
+    runtime: python
+    plan: free
+    region: singapore # closest to India; lower latency than the default
+    rootDir: backend # everything below runs relative to backend/
+
+    # Build once, start fast. Caching the ONNX model at build time is what
+    # keeps FastEmbed off the cold-start path — without it the first request
+    # after a sleep pays for a model download.
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python -c "from fastembed import TextEmbedding; TextEmbedding(model_name='BAAI/bge-small-en-v1.5')" || echo "model cache failed; set EMBEDDER=lexical"
+
+    # One worker. Two would double the memory for no throughput gain on a
+    # single shared CPU, and the app is stateless so scaling is horizontal.
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+
+    healthCheckPath: /health
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+
+      # Comma-separated. Must include your Vercel URL or the browser blocks
+      # every request with a CORS error that looks like the API is down.
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+      # auto | fastembed | lexical
+      # Use lexical if the build-time model cache fails — it starts in ~1s.
+      - key: EMBEDDER
+        value: auto
+
+      # Optional. Without it, extraction runs regex-only and escalates to
+      # manual entry for non-standard Form 16 templates.
+      - key: GROQ_API_KEY
+        sync: false
+
+      # Optional. Without it the corpus is served from the in-memory store,
+      # which is genuinely fine at this corpus size.
+      - key: PINECONE_API_KEY
+        sync: false
+
+      # Keeps pip from writing bytecode we never reuse across deploys.
+      - key: PYTHONDONTWRITEBYTECODE
+        value: "1"
+      - key: PYTHONUNBUFFERED
+        value: "1"

@@ -1,0 +1,101 @@
+{
+  "assessment_year": "2026-27",
+  "financial_year": "2025-26",
+  "source": "Income Tax Department, as amended by Finance Act 2026",
+  "cess_rate": "0.04",
+
+  "regimes": {
+    "old": {
+      "name": "Old Regime",
+      "section": "Normal provisions",
+      "standard_deduction": "50000",
+      "slabs": {
+        "default": [
+          { "upto": "250000", "rate": "0.00" },
+          { "upto": "500000", "rate": "0.05" },
+          { "upto": "1000000", "rate": "0.20" },
+          { "upto": null, "rate": "0.30" }
+        ],
+        "senior": [
+          { "upto": "300000", "rate": "0.00" },
+          { "upto": "500000", "rate": "0.05" },
+          { "upto": "1000000", "rate": "0.20" },
+          { "upto": null, "rate": "0.30" }
+        ],
+        "super_senior": [
+          { "upto": "500000", "rate": "0.00" },
+          { "upto": "1000000", "rate": "0.20" },
+          { "upto": null, "rate": "0.30" }
+        ]
+      },
+      "allowed_deductions": [
+        "hra", "80c", "80d", "24b", "80ccd1b", "80ccd2", "80tta"
+      ],
+      "caps": {
+        "80c": "150000",
+        "80ccd1b": "50000",
+        "24b": "200000",
+        "80tta": "10000",
+        "80d_self": "25000",
+        "80d_self_senior": "50000",
+        "80d_parents": "25000",
+        "80d_parents_senior": "50000"
+      },
+      "rebate_87a": {
+        "income_limit": "500000",
+        "max_rebate": "12500",
+        "marginal_relief": false
+      },
+      "surcharge": [
+        { "above": "5000000",  "rate": "0.10" },
+        { "above": "10000000", "rate": "0.15" },
+        { "above": "20000000", "rate": "0.25" },
+        { "above": "50000000", "rate": "0.37" }
+      ]
+    },
+
+    "new": {
+      "name": "New Regime",
+      "section": "115BAC(1A)",
+      "standard_deduction": "75000",
+      "slabs": {
+        "default": [
+          { "upto": "400000",  "rate": "0.00" },
+          { "upto": "800000",  "rate": "0.05" },
+          { "upto": "1200000", "rate": "0.10" },
+          { "upto": "1600000", "rate": "0.15" },
+          { "upto": "2000000", "rate": "0.20" },
+          { "upto": "2400000", "rate": "0.25" },
+          { "upto": null,      "rate": "0.30" }
+        ]
+      },
+      "allowed_deductions": ["80ccd2"],
+      "caps": {},
+      "rebate_87a": {
+        "income_limit": "1200000",
+        "max_rebate": "60000",
+        "marginal_relief": true
+      },
+      "surcharge": [
+        { "above": "5000000",  "rate": "0.10" },
+        { "above": "10000000", "rate": "0.15" },
+        { "above": "20000000", "rate": "0.25" },
+        { "above": "50000000", "rate": "0.37" }
+      ]
+    }
+  },
+
+  "hra": {
+    "metro_percent": "0.50",
+    "non_metro_percent": "0.40",
+    "rent_minus_basic_percent": "0.10"
+  },
+
+  "notes": [
+    "New regime has no age-based slab variation; senior citizen relief exists only in the old regime.",
+    "Section 87A rebate is applied before cess.",
+    "New regime 87A carries marginal relief above the income limit; old regime does not.",
+    "Standard deduction values are not stated in the source rate document and are encoded from Section 16(ia) as in force; VERIFY before claiming exact correctness.",
+    "Surcharge table for 115BAC(1A) is encoded as printed in the source document. Widely-cited guidance caps new-regime surcharge at 25%; this discrepancy is flagged for verification."
+  ]
+}

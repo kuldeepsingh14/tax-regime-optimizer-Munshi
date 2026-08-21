@@ -11,13 +11,12 @@ services:
     region: singapore # closest to India; lower latency than the default
     rootDir: backend # everything below runs relative to backend/
 
-    # Build once, start fast. Caching the ONNX model at build time is what
-    # keeps FastEmbed off the cold-start path — without it the first request
-    # after a sleep pays for a model download.
+    # No model pre-cache: EMBEDDER=lexical below means FastEmbed is never
+    # loaded, so downloading the ONNX weights would just add ~2 min to every
+    # build for something that is never read.
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
-      python -c "from fastembed import TextEmbedding; TextEmbedding(model_name='BAAI/bge-small-en-v1.5')" || echo "model cache failed; set EMBEDDER=lexical"
 
     # One worker. Two would double the memory for no throughput gain on a
     # single shared CPU, and the app is stateless so scaling is horizontal.
@@ -35,9 +34,13 @@ services:
         sync: false
 
       # auto | fastembed | lexical
-      # Use lexical if the build-time model cache fails — it starts in ~1s.
+      # MUST be lexical on the free tier. "auto" tries FastEmbed, which loads
+      # ONNX Runtime plus the BGE model at request time; that exceeds the
+      # 512 MB cap and the worker is OOM-killed mid-request, surfacing as a
+      # 502 after ~44s on /api/v1/ask. Lexical (TF-IDF) needs no model and
+      # answers instantly. Revisit only on a paid instance.
       - key: EMBEDDER
-        value: auto
+        value: lexical
 
       # Optional. Without it, extraction runs regex-only and escalates to
       # manual entry for non-standard Form 16 templates.

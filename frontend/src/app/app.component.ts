@@ -73,6 +73,9 @@ import { UploaderComponent } from './components/uploader.component';
         <p class="footer__privacy">
           Documents are read in memory and discarded. Nothing you enter is stored.
         </p>
+        <p class="footer__copyright">
+          &copy; {{ year }} Kuldeep Singh
+        </p>
       </div>
     </footer>
   `,
@@ -203,6 +206,13 @@ import { UploaderComponent } from './components/uploader.component';
         color: var(--brass-bright);
         margin: 0 0 1rem;
       }
+      .footer__copyright {
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgb(255 255 255 / 0.1);
+        font-size: 0.78rem;
+        opacity: 0.75;
+      }
       .footer p {
         margin: 0 0 0.5rem;
         max-width: 60ch;
@@ -215,6 +225,9 @@ import { UploaderComponent } from './components/uploader.component';
 })
 export class AppComponent {
   readonly api = inject(ApiService);
+
+  /** Rendered in the footer copyright, so it never goes stale. */
+  readonly year = new Date().getFullYear();
 
   readonly prefill = signal<Record<string, string> | null>(null);
   readonly result = signal<Comparison | null>(null);

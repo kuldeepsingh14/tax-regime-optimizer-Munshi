@@ -7,6 +7,10 @@ python-multipart==0.0.12
 # Agentic layer
 langgraph==0.2.28
 groq==0.11.0
+# groq 0.11 calls httpx.Client(proxies=...), which httpx 0.28 removed.
+# Unpinned, Render installs the latest httpx and every Groq call dies with
+# "unexpected keyword argument 'proxies'". Pin until groq is upgraded.
+httpx>=0.23.0,<0.28
 
 # Document extraction
 pdfplumber==0.11.4
